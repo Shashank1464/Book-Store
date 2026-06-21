@@ -9,12 +9,12 @@ BV.App = (() => {
   /* ─────────────────────────────────────────
      NAVIGATION
   ───────────────────────────────────────── */
-  const navigate = (page, id=null, source=null, extra=null, query=null) => {
+  const navigate = (page, id = null, source = null, extra = null, query = null) => {
     BV.Auth.closeAllDropdowns();
     const app = document.getElementById('app');
     if (!app) return;
 
-    // Transition out
+    // Transition out 
     app.style.opacity = '0';
     app.style.transform = 'translateY(8px)';
     app.style.transition = 'opacity 0.15s, transform 0.15s';
@@ -22,7 +22,7 @@ BV.App = (() => {
     setTimeout(() => {
       let html = '';
 
-      switch(page) {
+      switch (page) {
         case 'home':
           html = BV.Home.render();
           break;
@@ -140,8 +140,8 @@ BV.App = (() => {
     }
 
     list.innerHTML = notifs.slice(0, 10).map(n => `
-      <div class="notif-item ${n.read?'':'unread'}" onclick="BV.App.markNotifRead('${n.id}')">
-        <div class="notif-icon" style="background:${n.read?'var(--clr-surface-3)':'var(--clr-primary-dim)'}">${n.icon||'🔔'}</div>
+      <div class="notif-item ${n.read ? '' : 'unread'}" onclick="BV.App.markNotifRead('${n.id}')">
+        <div class="notif-icon" style="background:${n.read ? 'var(--clr-surface-3)' : 'var(--clr-primary-dim)'}">${n.icon || '🔔'}</div>
         <div class="notif-content">
           <div class="notif-msg">${BV.UI.escapeHtml(n.message)}</div>
           <div class="notif-time">${BV.UI.formatTimeAgo(n.createdAt)}</div>
