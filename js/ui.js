@@ -107,6 +107,23 @@ BV.UI = (() => {
   ───────────────────────────────────────── */
   const bookCoverHTML = (book, height='220px') => {
     const gradient = BV.Store.getBookGradient(book.category);
+    if (book.coverUrl) {
+      return `
+        <div class="book-cover-img-wrap" style="height:${height};background:${gradient}">
+          <img
+            src="${book.coverUrl}"
+            alt="${escapeHtml(book.title)}"
+            class="book-cover-img"
+            loading="lazy"
+            onerror="this.style.display='none';this.parentElement.querySelector('.book-cover-fallback').style.display='flex'"
+          >
+          <div class="book-cover-fallback" style="display:none;background:${gradient}">
+            <div class="book-cover-title">${escapeHtml(book.title)}</div>
+            <div class="book-cover-author">${escapeHtml(book.author)}</div>
+          </div>
+        </div>
+      `;
+    }
     return `
       <div class="book-cover-bg" style="background:${gradient};height:${height}"></div>
       <div class="book-cover-overlay"></div>
@@ -136,10 +153,24 @@ BV.UI = (() => {
   const bookCardHTML = (book, source='store') => {
     const inWishlist = BV.Store.isInWishlist(book.id);
     const discount = book.originalPrice ? Math.round((1 - book.price/book.originalPrice)*100) : 0;
+    const gradient = BV.Store.getBookGradient(book.category);
+    const coverInner = book.coverUrl
+      ? `<img src="${book.coverUrl}" alt="${escapeHtml(book.title)}" class="book-cover-img" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+         <div class="book-cover-fallback" style="display:none;background:${gradient}">
+           <div class="book-cover-title">${escapeHtml(book.title)}</div>
+           <div class="book-cover-author">${escapeHtml(book.author)}</div>
+         </div>`
+      : `<div class="book-cover-bg" style="background:${gradient}"></div>
+         <div class="book-cover-overlay"></div>
+         <div class="book-cover-text">
+           <div class="book-cover-title">${escapeHtml(book.title)}</div>
+           <div class="book-cover-author">${escapeHtml(book.author)}</div>
+         </div>`;
     return `
       <div class="book-card hover-lift" data-id="${book.id}" data-source="${source}" onclick="BV.App.navigate('book', '${book.id}', '${source}')">
-        <div class="book-cover">
-          ${bookCoverHTML(book)}
+        <div class="book-cover ${book.coverUrl ? 'has-img' : ''}" style="background:${gradient}">
+          ${coverInner}
           <div class="book-card-badges">
             ${book.bestseller ? '<span class="badge badge-gold">🔥 Bestseller</span>' : ''}
             ${book.newArrival ? '<span class="badge badge-teal">✨ New</span>' : ''}
@@ -184,16 +215,24 @@ BV.UI = (() => {
       'New':'condition-new', 'Like New':'condition-like',
       'Good':'condition-good', 'Fair':'condition-fair', 'Poor':'condition-poor'
     }[listing.condition] || 'condition-good';
+    const coverInner = listing.coverUrl
+      ? `<img src="${listing.coverUrl}" alt="${escapeHtml(listing.title)}" class="book-cover-img" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+         <div class="book-cover-fallback" style="display:none;background:${gradient}">
+           <div class="book-cover-title">${escapeHtml(listing.title)}</div>
+           <div class="book-cover-author">${escapeHtml(listing.author)}</div>
+         </div>`
+      : `<div class="book-cover-bg" style="background:${gradient}"></div>
+         <div class="book-cover-overlay"></div>
+         <div class="book-cover-text">
+           <div class="book-cover-title">${escapeHtml(listing.title)}</div>
+           <div class="book-cover-author">${escapeHtml(listing.author)}</div>
+         </div>`;
 
     return `
       <div class="book-card hover-lift" onclick="BV.App.navigate('book', '${listing.id}', 'marketplace')">
-        <div class="book-cover">
-          <div class="book-cover-bg" style="background:${gradient}"></div>
-          <div class="book-cover-overlay"></div>
-          <div class="book-cover-text">
-            <div class="book-cover-title">${escapeHtml(listing.title)}</div>
-            <div class="book-cover-author">${escapeHtml(listing.author)}</div>
-          </div>
+        <div class="book-cover ${listing.coverUrl ? 'has-img' : ''}" style="background:${gradient}">
+          ${coverInner}
           <div class="book-card-badges">
             <span class="badge ${conditionClass}">${listing.condition}</span>
           </div>

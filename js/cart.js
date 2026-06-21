@@ -161,7 +161,16 @@ BV.Browse = (() => {
     const discount = book.originalPrice ? Math.round((1 - book.price/book.originalPrice)*100) : 0;
     return `
       <div style="display:flex;gap:var(--sp-4);padding:var(--sp-4);background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-xl);cursor:pointer;transition:all var(--dur-base)" onclick="BV.App.navigate('book','${book.id}','store')" onmouseenter="this.style.borderColor='var(--clr-border-hover)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
-        <div style="width:80px;height:110px;border-radius:var(--radius-md);overflow:hidden;flex-shrink:0;background:${gradient};display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:var(--fw-bold);color:rgba(255,255,255,0.8);text-align:center;padding:4px">${BV.UI.escapeHtml(book.title)}</div>
+        <div class="${book.coverUrl ? 'has-img' : ''}" style="width:80px;height:110px;border-radius:var(--radius-md);overflow:hidden;flex-shrink:0;background:${gradient};position:relative;display:flex;align-items:center;justify-content:center">
+          ${book.coverUrl 
+            ? `<img src="${book.coverUrl}" alt="${BV.UI.escapeHtml(book.title)}" class="book-cover-img" loading="lazy"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+               <div class="book-cover-fallback" style="display:none;background:${gradient};display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:var(--fw-bold);color:rgba(255,255,255,0.8);text-align:center;padding:4px;position:absolute;inset:0">
+                 ${BV.UI.escapeHtml(book.title)}
+               </div>`
+            : `<div style="font-size:var(--text-xs);font-weight:var(--fw-bold);color:rgba(255,255,255,0.8);text-align:center;padding:4px">${BV.UI.escapeHtml(book.title)}</div>`
+          }
+        </div>
         <div style="flex:1;min-width:0">
           <div style="font-size:var(--text-xs);color:var(--clr-primary);font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">${book.category}</div>
           <h4 style="font-size:var(--text-md);font-weight:var(--fw-bold);margin-bottom:2px;line-clamp:1">${BV.UI.escapeHtml(book.title)}</h4>
@@ -254,9 +263,17 @@ BV.BookDetail = (() => {
           <div class="book-detail-layout">
             <!-- Cover & Buy -->
             <div class="book-detail-cover">
-              <div class="book-detail-cover-img" style="background:${gradient}">
-                <div class="book-detail-cover-title">${BV.UI.escapeHtml(book.title)}</div>
-                <div class="book-detail-cover-author">by ${BV.UI.escapeHtml(book.author)}</div>
+              <div class="book-detail-cover-img ${book.coverUrl ? 'has-img' : ''}" style="background:${gradient}">
+                ${book.coverUrl 
+                  ? `<img src="${book.coverUrl}" alt="${BV.UI.escapeHtml(book.title)}" class="book-cover-img" loading="lazy"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                     <div class="book-cover-fallback" style="display:none;background:${gradient}">
+                       <div class="book-detail-cover-title">${BV.UI.escapeHtml(book.title)}</div>
+                       <div class="book-detail-cover-author">by ${BV.UI.escapeHtml(book.author)}</div>
+                     </div>`
+                  : `<div class="book-detail-cover-title">${BV.UI.escapeHtml(book.title)}</div>
+                     <div class="book-detail-cover-author">by ${BV.UI.escapeHtml(book.author)}</div>`
+                }
               </div>
 
               <!-- Price Box -->
@@ -534,8 +551,15 @@ BV.Cart = (() => {
       const gradient = BV.Store.getBookGradient(book.category||'Fiction');
       return `
         <div class="cart-item">
-          <div class="cart-item-cover" style="background:${gradient};display:flex;align-items:center;justify-content:center">
-            <span style="font-size:var(--text-xs);color:rgba(255,255,255,0.8);text-align:center;padding:4px;font-weight:var(--fw-bold)">${BV.UI.escapeHtml(book.title)}</span>
+          <div class="cart-item-cover ${book.coverUrl ? 'has-img' : ''}" style="background:${gradient};display:flex;align-items:center;justify-content:center">
+            ${book.coverUrl 
+              ? `<img src="${book.coverUrl}" alt="${BV.UI.escapeHtml(book.title)}" class="book-cover-img" loading="lazy"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                 <div class="book-cover-fallback" style="display:none;background:${gradient};align-items:center;justify-content:center;padding:4px;position:absolute;inset:0">
+                   <span style="font-size:var(--text-xs);color:rgba(255,255,255,0.8);text-align:center;font-weight:var(--fw-bold)">${BV.UI.escapeHtml(book.title)}</span>
+                 </div>`
+              : `<span style="font-size:var(--text-xs);color:rgba(255,255,255,0.8);text-align:center;padding:4px;font-weight:var(--fw-bold)">${BV.UI.escapeHtml(book.title)}</span>`
+            }
           </div>
           <div class="cart-item-info">
             <div class="cart-item-title">${BV.UI.escapeHtml(book.title)}</div>
@@ -843,10 +867,17 @@ BV.Wishlist = (() => {
     const discount = book.originalPrice ? Math.round((1-book.price/book.originalPrice)*100) : 0;
     return `
       <div class="book-card hover-lift">
-        <div class="book-cover" onclick="BV.App.navigate('book','${book.id}','store')" style="cursor:pointer">
-          <div class="book-cover-bg" style="background:${gradient}"></div>
-          <div class="book-cover-overlay"></div>
-          <div class="book-cover-text"><div class="book-cover-title">${BV.UI.escapeHtml(book.title)}</div></div>
+        <div class="book-cover ${book.coverUrl ? 'has-img' : ''}" onclick="BV.App.navigate('book','${book.id}','store')" style="cursor:pointer;background:${gradient}">
+          ${book.coverUrl 
+            ? `<img src="${book.coverUrl}" alt="${BV.UI.escapeHtml(book.title)}" class="book-cover-img" loading="lazy"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+               <div class="book-cover-fallback" style="display:none;background:${gradient}">
+                 <div class="book-cover-title">${BV.UI.escapeHtml(book.title)}</div>
+               </div>`
+            : `<div class="book-cover-bg" style="background:${gradient}"></div>
+               <div class="book-cover-overlay"></div>
+               <div class="book-cover-text"><div class="book-cover-title">${BV.UI.escapeHtml(book.title)}</div></div>`
+          }
           ${discount>=10?`<div class="book-card-badges"><span class="badge badge-accent">-${discount}%</span></div>`:''}
         </div>
         <div class="book-card-body">

@@ -403,7 +403,12 @@ BV.Admin = (() => {
                 <tr>
                   <td>
                     <div style="display:flex;align-items:center;gap:var(--sp-3)">
-                      <div style="width:36px;height:48px;border-radius:var(--radius-sm);background:${BV.Store.getBookGradient(b.category)};flex-shrink:0;display:flex;align-items:center;justify-content:center"></div>
+                      <div style="width:36px;height:48px;border-radius:var(--radius-sm);background:${BV.Store.getBookGradient(b.category)};flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+                        ${b.coverUrl 
+                          ? `<img src="${b.coverUrl}" alt="${BV.UI.escapeHtml(b.title)}" class="book-cover-img" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` 
+                          : ''
+                        }
+                      </div>
                       <div>
                         <div style="font-weight:var(--fw-semibold);font-size:var(--text-sm)">${BV.UI.escapeHtml(b.title)}</div>
                         <div style="font-size:var(--text-xs);color:var(--clr-text-muted)">${BV.UI.escapeHtml(b.author)}</div>

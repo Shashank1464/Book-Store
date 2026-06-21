@@ -122,7 +122,7 @@ BV.Store = (() => {
   };
 
   const init = () => {
-    if (!get('initialized')) {
+    if (get('dataVersion') !== '2') {
       set('users',             SEED_USERS);
       set('storeBooks',        SEED_BOOKS);
       set('marketplaceListings', SEED_MARKETPLACE);
@@ -132,6 +132,7 @@ BV.Store = (() => {
       set('cart',              []);
       set('wishlist',          []);
       set('session',           null);
+      set('dataVersion',       '2');
       set('initialized',       true);
     }
   };

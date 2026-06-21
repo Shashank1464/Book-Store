@@ -804,6 +804,7 @@
 }
 
 .book-detail-cover-img {
+  position: relative;
   width: 100%;
   aspect-ratio: 2/3;
   border-radius: var(--radius-xl);
@@ -815,6 +816,11 @@
   justify-content: center;
   padding: var(--sp-6);
   text-align: center;
+}
+
+.book-detail-cover-img.has-img {
+  padding: 0;
+  display: block;
 }
 
 .book-detail-cover-title {
