@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BookVerse — India's premier online bookstore and community marketplace. Buy, sell and discover books. Shop curated titles or buy pre-loved books from fellow readers.">
+  <meta name="keywords" content="bookstore, buy books online, sell books, used books India, book marketplace, BookVerse">
+  <meta property="og:title" content="BookVerse — Books for Everyone">
+  <meta property="og:description" content="Discover thousands of books. Buy from our curated store or trade with fellow readers on the marketplace.">
+  <title>BookVerse — Books for Everyone</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+
+  <style>
+    /* Inline critical styles for above-the-fold */
+    body { padding-top: var(--nav-h); }
+    #app { min-height: calc(100vh - var(--nav-h)); transition: opacity 0.25s, transform 0.25s; }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       NAVBAR
+  ============================================= -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-inner">
+
+      <!-- Logo -->
+      <a class="navbar-logo" onclick="BV.App.navigate('home')" id="nav-logo" aria-label="BookVerse Home">
+        <div class="logo-icon">📚</div>
+        <span class="logo-text">BookVerse</span>
+      </a>
+
+      <!-- Search Bar (desktop) -->
+      <div class="navbar-search">
+        <div class="search-bar" id="nav-search-bar">
+          <span class="search-icon" style="font-size:14px">🔍</span>
+          <input
+            type="text"
+            id="nav-search-input"
+            placeholder="Search books, authors, ISBN..."
+            aria-label="Search books"
+            onkeydown="if(event.key==='Enter'){ const q=this.value.trim(); if(q) BV.App.navigate('bookstore',null,null,null,q); }"
+          >
+          <button style="font-size:12px;color:var(--clr-text-faint);background:none;border:none;cursor:pointer;padding:0 4px" onclick="const q=document.getElementById('nav-search-input').value.trim();if(q)BV.App.navigate('bookstore',null,null,null,q)">⏎</button>
+        </div>
+      </div>
+
+      <!-- Nav Links (desktop) -->
+      <div class="navbar-links" role="menubar">
+        <button class="nav-link" data-page="home" onclick="BV.App.navigate('home')" role="menuitem">🏠 Home</button>
+        <button class="nav-link" data-page="bookstore" onclick="BV.App.navigate('bookstore')" role="menuitem">📚 Store</button>
+        <button class="nav-link" data-page="marketplace" onclick="BV.App.navigate('marketplace')" role="menuitem">🏪 Marketplace</button>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="navbar-actions">
+
+        <!-- Notification Bell -->
+        <div class="notif-bell dropdown" id="notif-bell-wrap">
+          <button
+            class="btn btn-ghost btn-icon"
+            id="notif-btn"
+            onclick="BV.App.toggleNotifications()"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            🔔
+          </button>
+          <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+
+          <!-- Notification Dropdown -->
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-dropdown-header">
+              <h4>Notifications</h4>
+              <button class="notif-mark-all" onclick="BV.App.markAllNotifRead()">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <div class="notif-empty">🔔 Sign in to see notifications</div>
+            </div>
+            <div class="notif-footer">
+              <a onclick="BV.Auth.closeAllDropdowns();BV.App.navigate('dashboard')">View all notifications →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wishlist -->
+        <div class="cart-icon-wrap">
+          <button
+            class="btn btn-ghost btn-icon"
+            onclick="BV.App.navigate('wishlist')"
+            aria-label="Wishlist"
+            title="Wishlist"
+          >❤️</button>
+          <span class="cart-count" id="wishlist-count" style="display:none">0</span>
+        </div>
+
+        <!-- Cart -->
+        <div class="cart-icon-wrap">
+          <button
+            class="btn btn-ghost btn-icon"
+            id="cart-btn"
+            onclick="BV.App.navigate('cart')"
+            aria-label="Shopping cart"
+            title="Cart"
+          >🛒</button>
+          <span class="cart-count" id="cart-count" style="display:none">0</span>
+        </div>
+
+        <!-- Auth Area (login btn or user menu) -->
+        <div id="nav-auth-area" style="display:flex;align-items:center;gap:var(--sp-2)">
+          <button class="btn btn-ghost btn-sm" onclick="BV.App.navigate('auth')">Sign In</button>
+          <button class="btn btn-primary btn-sm" onclick="BV.App.navigate('auth')">Join Free</button>
+        </div>
+
+        <!-- Hamburger (mobile) -->
+        <button class="hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =============================================
+       MOBILE DRAWER
+  ============================================= -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <nav class="drawer" id="mobile-drawer" aria-label="Mobile navigation">
+    <div class="drawer-header">
+      <div class="navbar-logo">
+        <div class="logo-icon" style="width:32px;height:32px;font-size:16px">📚</div>
+        <span class="logo-text" style="font-size:var(--text-base)">BookVerse</span>
+      </div>
+      <button class="modal-close" id="drawer-close" aria-label="Close menu">✕</button>
+    </div>
+
+    <!-- Mobile Search -->
+    <div style="padding:var(--sp-3) var(--sp-4)">
+      <div class="search-bar" style="border-radius:var(--radius-md)">
+        <span class="search-icon" style="font-size:13px">🔍</span>
+        <input type="text" id="drawer-search" placeholder="Search books..." onkeydown="if(event.key==='Enter'){ const q=this.value.trim(); if(q){ BV.App.drawerNavigate('bookstore'); setTimeout(()=>BV.App.navigate('bookstore',null,null,null,q),200); } }">
+      </div>
+    </div>
+
+    <nav class="drawer-nav">
+      <div class="drawer-section-title">Navigation</div>
+      <button class="drawer-link" data-page="home" onclick="BV.App.drawerNavigate('home')"><span class="icon">🏠</span>Home</button>
+      <button class="drawer-link" data-page="bookstore" onclick="BV.App.drawerNavigate('bookstore')"><span class="icon">📚</span>Bookstore</button>
+      <button class="drawer-link" data-page="marketplace" onclick="BV.App.drawerNavigate('marketplace')"><span class="icon">🏪</span>Marketplace</button>
+
+      <div class="drawer-section-title">My Account</div>
+      <button class="drawer-link" data-page="dashboard" onclick="BV.App.drawerNavigate('dashboard')"><span class="icon">📊</span>Dashboard</button>
+      <button class="drawer-link" data-page="orders" onclick="BV.App.drawerNavigate('orders')"><span class="icon">📦</span>My Orders</button>
+      <button class="drawer-link" data-page="wishlist" onclick="BV.App.drawerNavigate('wishlist')"><span class="icon">❤️</span>Wishlist</button>
+      <button class="drawer-link" data-page="cart" onclick="BV.App.drawerNavigate('cart')"><span class="icon">🛒</span>Cart</button>
+    </nav>
+
+    <div class="drawer-footer" id="drawer-auth">
+      <button class="btn btn-gradient w-full" onclick="BV.App.drawerNavigate('auth')">Sign In / Join Free</button>
+    </div>
+  </nav>
+
+  <!-- =============================================
+       MAIN APP CONTENT
+  ============================================= -->
+  <main id="app" role="main" aria-label="Main content">
+    <!-- Content injected by router -->
+    <div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+      <div class="spinner"></div>
+    </div>
+  </main>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <div class="navbar-logo" style="margin-bottom:var(--sp-4)">
+            <div class="logo-icon">📚</div>
+            <span class="logo-text">BookVerse</span>
+          </div>
+          <p>India's premier online bookstore and community marketplace. Discover, read, and connect through books.</p>
+          <div class="footer-social">
+            <button class="social-btn" title="Twitter">𝕏</button>
+            <button class="social-btn" title="Instagram">📷</button>
+            <button class="social-btn" title="Facebook">f</button>
+            <button class="social-btn" title="YouTube">▶</button>
+          </div>
+          <!-- Newsletter -->
+          <div style="margin-top:var(--sp-5)">
+            <p style="font-size:var(--text-sm);font-weight:var(--fw-semibold);margin-bottom:var(--sp-2)">📧 Newsletter</p>
+            <div class="newsletter-form">
+              <input type="email" placeholder="your@email.com" id="newsletter-email">
+              <button class="btn btn-primary btn-sm" onclick="document.getElementById('newsletter-email').value&&BV.UI.toast('Subscribed! 🎉','Thanks for joining our newsletter','success')">Subscribe</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-col">
+          <h5>Bookstore</h5>
+          <div class="footer-links">
+            <span class="footer-link" onclick="BV.App.navigate('bookstore')">Browse All Books</span>
+            <span class="footer-link" onclick="BV.App.navigate('bookstore',null,null,'Fiction')">Fiction</span>
+            <span class="footer-link" onclick="BV.App.navigate('bookstore',null,null,'Sci-Fi')">Sci-Fi</span>
+            <span class="footer-link" onclick="BV.App.navigate('bookstore',null,null,'Self-Help')">Self-Help</span>
+            <span class="footer-link" onclick="BV.App.navigate('bookstore',null,null,'Fantasy')">Fantasy</span>
+            <span class="footer-link" onclick="BV.App.navigate('bookstore',null,null,'History')">History</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Marketplace</h5>
+          <div class="footer-links">
+            <span class="footer-link" onclick="BV.App.navigate('marketplace')">Browse Listings</span>
+            <span class="footer-link" onclick="BV.Marketplace.showListingForm()">Sell Your Books</span>
+            <span class="footer-link">Seller Guide</span>
+            <span class="footer-link">Pricing</span>
+            <span class="footer-link">Seller Dashboard</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Support</h5>
+          <div class="footer-links">
+            <span class="footer-link">Help Center</span>
+            <span class="footer-link">Contact Us</span>
+            <span class="footer-link">Return Policy</span>
+            <span class="footer-link">Privacy Policy</span>
+            <span class="footer-link">Terms of Service</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 BookVerse. All rights reserved.</span>
+        <div style="display:flex;align-items:center;gap:var(--sp-4)">
+          <span>Made with ❤️ for book lovers</span>
+          <span style="display:flex;align-items:center;gap:var(--sp-2)">
+            <span>Powered by</span>
+            <span style="color:var(--clr-primary);font-weight:var(--fw-bold)">Razorpay Ready</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =============================================
+       MODAL OVERLAY
+  ============================================= -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Dialog">
+    <div class="modal" id="modal-inner"></div>
+  </div>
+
+  <!-- =============================================
+       TOAST CONTAINER
+  ============================================= -->
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-label="Notifications"></div>
+
+  <!-- =============================================
+       JAVASCRIPT MODULES
+  ============================================= -->
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/bookstore.js"></script>
+  <script src="js/marketplace.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
