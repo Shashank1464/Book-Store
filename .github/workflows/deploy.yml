@@ -10,22 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Project
-        run: npm run build
-
-      - name: Create ZIP
-        run: zip -r site.zip dist
 
       - name: Deploy
         run: |
-          curl \
-            -X POST \
-            -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
-            -F "file=@site.zip" \
-            ${{ secrets.DEPLOY_URL }}
+          zip -r site.zip .
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
+          -F "file=@site.zip" \
+          http://56.228.24.225/deploy
