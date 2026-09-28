@@ -1,4 +1,4 @@
-# 📚 BookVerse — Online Bookstore & Community Marketplace
+# 📚 BookVerse (v1) — Online Bookstore & Community Marketplace
 
 A premium, fully-featured online bookstore and community marketplace built with **HTML, CSS, and vanilla JavaScript**.
 
